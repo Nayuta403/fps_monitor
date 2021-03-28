@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:fps_monitor/bean/fps_info.dart';
+import 'package:fps_monitor/util/collection_util.dart';
 
 import 'fps_chart.dart';
 
@@ -12,8 +14,7 @@ class FpsPage extends StatefulWidget {
 class FpsPageState extends State<FpsPage> {
   @override
   Widget build(BuildContext context) {
-    List<FpsInfo> list = PerformanceCollectionUtil.instance.storage.getAll();
-
+    List<FpsInfo> list = CommonStorage.instance.getAll();
     return Container(
       width: MediaQuery.of(context).size.width,
       child: Column(
@@ -25,34 +26,12 @@ class FpsPageState extends State<FpsPage> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
-                  Text('近240帧',
-                      style: const TextStyle(
-                          color: Colors.black,
-                          fontWeight: FontWeight.normal,
-                          fontFamily: 'PingFang SC',
-                          fontSize: 9)),
-                  Text(
-                      '最大耗时:${PerformanceCollectionUtil.instance.storage.max.toStringAsFixed(1)}',
-                      style: const TextStyle(
-                          color: Colors.grey,
-                          fontWeight: FontWeight.normal,
-                          fontFamily: 'PingFang SC',
-                          fontSize: 9)),
-                  Text(
-                      '平均耗时:${PerformanceCollectionUtil.instance.storage.getAvg().toStringAsFixed(1)}',
-                      style: const TextStyle(
-                          color: Colors.grey,
-                          fontWeight: FontWeight.normal,
-                          fontFamily: 'PingFang SC',
-                          fontSize: 9)),
-                  Text(
-                      '总耗时:${PerformanceCollectionUtil.instance.storage.totalNum.toStringAsFixed(1)}',
-                      style: const TextStyle(
-                          color: Colors.grey,
-                          fontWeight: FontWeight.normal,
-                          fontFamily: 'PingFang SC',
-                          fontSize: 14))
-
+                  info('近${CommonStorage.instance.items.length}帧'),
+                  info('最大耗时:${CommonStorage.instance.max.toStringAsFixed(1)}'),
+                  info(
+                      '平均耗时:${CommonStorage.instance.getAvg().toStringAsFixed(1)}'),
+                  info(
+                      '总耗时:${CommonStorage.instance.totalNum.toStringAsFixed(1)}')
                 ],
               )),
           Divider(
@@ -65,5 +44,14 @@ class FpsPageState extends State<FpsPage> {
         ],
       ),
     );
+  }
+
+  Widget info(String text) {
+    return Text("$text",
+        style: const TextStyle(
+            color: Colors.grey,
+            fontWeight: FontWeight.normal,
+            fontFamily: 'PingFang SC',
+            fontSize: 9));
   }
 }

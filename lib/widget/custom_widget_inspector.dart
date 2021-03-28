@@ -3,8 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 
+import 'performance_observer_widget.dart';
+
 const double _kInspectButtonMargin = 10.0;
-const double _kErrorReminderButtonMargin = 80.0;
+const double _kErrorReminderButtonMargin = 40.0;
+GlobalKey<NavigatorState> navGlobalKey = GlobalKey();
 
 class CustomWidgetInspector extends StatefulWidget {
   /// 展示性能监控数据
@@ -13,13 +16,12 @@ class CustomWidgetInspector extends StatefulWidget {
   /// Creates a widget that enables inspection for the child.
   ///
   /// The [child] argument must not be null.
-  const CustomWidgetInspector({Key key, @required this.child, this.nav})
+  const CustomWidgetInspector({Key key, @required this.child})
       : assert(child != null),
         super(key: key);
 
   /// The widget that is being inspected.
   final Widget child;
-  final Widget nav;
 
   @override
   _CustomWidgetInspectorState createState() => _CustomWidgetInspectorState();
@@ -28,7 +30,6 @@ class CustomWidgetInspector extends StatefulWidget {
 class _CustomWidgetInspectorState extends State<CustomWidgetInspector> {
   /// Distance from the edge of the bounding box for an element to consider
   /// as selecting the edge of the bounding box.
-  static const double _edgeHitMargin = 2.0;
 
   final GlobalKey rootGlobalKey = GlobalKey();
   final InspectorSelection selection =
@@ -36,7 +37,10 @@ class _CustomWidgetInspectorState extends State<CustomWidgetInspector> {
 
   @override
   Widget build(BuildContext context) {
-    Widget result = widget.child;
+    Widget child = widget.child;
+
+    //release模式不打开FPS监控
+    if (bool.fromEnvironment("dart.vm.product")) return child;
 
     Widget performanceObserver = Container();
 
@@ -45,23 +49,23 @@ class _CustomWidgetInspectorState extends State<CustomWidgetInspector> {
     }
 
     if (CustomWidgetInspector.debugShowPerformanceMonitor) {
-      result = Stack(
+      child = Stack(
         alignment: AlignmentDirectional.topStart,
         children: <Widget>[
           IgnorePointer(
             ignoring: false,
             key: rootGlobalKey,
-            child: result,
+            child: child,
           ),
           Positioned(
             right: _kInspectButtonMargin,
-            top: _kErrorReminderButtonMargin,
+            bottom: _kErrorReminderButtonMargin,
             child: performanceObserver,
           )
         ],
       );
     }
-    return result;
+    return child;
   }
 
   @override

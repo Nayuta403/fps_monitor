@@ -1,16 +1,15 @@
-import 'dart:async';
 import 'dart:math';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:fps_monitor/bean/fps_info.dart';
+import 'package:fps_monitor/util/collection_util.dart';
+import 'package:fps_monitor/widget/custom_widget_inspector.dart';
 
 import 'fps_page.dart';
-import 'performance_page.dart';
 
 class PerformanceObserverWidget extends StatefulWidget {
-  final Widget nav;
-
-  const PerformanceObserverWidget({Key key, this.nav}) : super(key: key);
+  const PerformanceObserverWidget({Key key}) : super(key: key);
 
   @override
   _PerformanceObserverWidgetState createState() =>
@@ -19,39 +18,31 @@ class PerformanceObserverWidget extends StatefulWidget {
 
 class _PerformanceObserverWidgetState extends State<PerformanceObserverWidget> {
   bool startRecording = false;
-  StreamController controller;
-  Function(List<FrameTiming>) monitor;
-  int catton = 40;
-  OverlayEntry fpsInfoPage;
-  OverlayEntry performancePage;
   bool fpsPageShowing = false;
 
-  bool checkValid(int fps) {
-    return fps >= 0 && fps < 500;
-  }
+  ValueNotifier controller;
+  Function(List<FrameTiming>) monitor;
+  OverlayEntry fpsInfoPage;
+  OverlayEntry performancePage;
 
   @override
   void initState() {
     super.initState();
-    controller = StreamController();
+    controller = ValueNotifier("");
     monitor = (timings) {
-      int fps = 0;
+      double duration = 0;
       timings.forEach((element) {
         FrameTiming frameTiming = element;
-        fps = frameTiming.totalSpan.inMilliseconds;
-        if (checkValid(fps)) {
-          FpsInfo fpsInfo = new FpsInfo();
-          fpsInfo.fps = max(16, fps);
-          // controller.add((1000 / max(16.7, fps)).round());
-          PerformanceCollectionUtil.instance.storage.save(fpsInfo);
-        }
+        duration = frameTiming.totalSpan.inMilliseconds.toDouble();
+        FpsInfo fpsInfo = new FpsInfo();
+        fpsInfo.totalSpan = max(16.7, duration);
+        CommonStorage.instance.save(fpsInfo);
       });
     };
   }
 
   @override
   void dispose() {
-    controller.close();
     stop();
     super.dispose();
   }
@@ -70,19 +61,15 @@ class _PerformanceObserverWidgetState extends State<PerformanceObserverWidget> {
       children: <Widget>[
         GestureDetector(
           child: RepaintBoundary(
-            child: StreamBuilder(
-                stream: controller.stream,
-                builder: (context, snapshot) {
-                  return startRecording
-                      ? Text(
-                          "查看数据",
-                          style: TextStyle(fontSize: 9),
-                        )
-                      : Text(
-                          '开始统计',
-                          style:
-                              const TextStyle(fontSize: 9, color: Colors.black),
-                        );
+            child: ValueListenableBuilder(
+                valueListenable: controller,
+                builder: (context, snapshot, _) {
+                  return Container(
+                    color: Colors.white,
+                    child: !startRecording
+                        ? Icon(Icons.play_arrow)
+                        : fpsPageShowing ? Row() : Icon(Icons.pause),
+                  );
                 }),
           ),
           onTap: () {
@@ -97,74 +84,63 @@ class _PerformanceObserverWidgetState extends State<PerformanceObserverWidget> {
     if (!startRecording) {
       setState(() {
         start();
-        controller.add("");
         startRecording = true;
+        controller.value = startRecording;
       });
     } else {
       if (!fpsPageShowing) {
         stop();
         if (fpsInfoPage == null) {
           fpsInfoPage = OverlayEntry(builder: (c) {
-            return GestureDetector(
-              onTap: () {
-                fpsInfoPage.remove();
-                start();
-              },
-              child: Scaffold(
-                body: Column(
-                  children: <Widget>[
-                    Expanded(
-                        child: GestureDetector(
-                      onTap: () {
-                        fpsInfoPage.remove();
-                        fpsPageShowing = false;
-                        start();
-                      },
-                      child: Container(
-                        color: Color(0x33999999),
-                      ),
-                    )),
-                    Container(
-                        color: Colors.white,
-                        child: Column(
-                          children: <Widget>[
-                            FpsPage(),
-                            Divider(),
-                            Container(
-                              padding: const EdgeInsets.only(
-                                  left: 20, top: 20, bottom: 20),
-                              child: GestureDetector(
-                                child: Text(
-                                  '停止监听',
-                                  style: TextStyle(color: Colors.blue),
-                                ),
-                                onTap: () {
-                                  startRecording = false;
-                                  fpsInfoPage.remove();
-                                  fpsPageShowing = false;
-                                  PerformanceCollectionUtil.instance.storage
-                                      .clear();
-                                  setState(() {});
-                                },
+            return Scaffold(
+              body: Column(
+                children: <Widget>[
+                  Expanded(
+                      child: GestureDetector(
+                    onTap: () {
+                      fpsInfoPage.remove();
+                      fpsPageShowing = false;
+                      start();
+                    },
+                    child: Container(
+                      color: Color(0x33999999),
+                    ),
+                  )),
+                  Container(
+                      color: Colors.white,
+                      child: Column(
+                        children: <Widget>[
+                          FpsPage(),
+                          Divider(),
+                          Container(
+                            padding: const EdgeInsets.only(
+                                left: 20, top: 20, bottom: 20),
+                            child: GestureDetector(
+                              child: Text(
+                                '停止监听',
+                                style: TextStyle(color: Colors.blue),
                               ),
-                              alignment: Alignment.bottomLeft,
+                              onTap: () {
+                                startRecording = false;
+                                fpsInfoPage.remove();
+                                fpsPageShowing = false;
+                                CommonStorage.instance.clear();
+                                controller.value = startRecording;
+                                // setState(() {});
+                              },
                             ),
-                          ],
-                        )),
-                  ],
-                ),
-                backgroundColor: Color(0x33999999),
+                            alignment: Alignment.bottomLeft,
+                          ),
+                        ],
+                      )),
+                ],
               ),
+              backgroundColor: Color(0x33999999),
             );
           });
         }
-
         fpsPageShowing = true;
-        globalKey.currentState.overlay.insert(fpsInfoPage);
-      } else {
-        // start();
-        // if () fpsInfoPage.remove();
-        // fpsPageShowing = false;
+        navGlobalKey.currentState.overlay.insert(fpsInfoPage);
       }
     }
   }

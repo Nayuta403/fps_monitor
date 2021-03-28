@@ -1,64 +1,54 @@
-import 'dart:async';
+import 'dart:collection';
 
-import 'package:example/performance/bean/fps_info.dart';
-import 'package:example/performance/bean/performance_bean.dart';
+import 'package:fps_monitor/bean/fps_info.dart';
 
-const Map<String, String> defaultPerformanceDataMapping = const {
-  "name": "页面名称",
-  "package_name": "包名",
-  "init_to_first_appear": "首次渲染",
-  "init_to_re_render": "二次渲染",
-  "fps": "平均fps",
-  "catons": "卡顿次数"
-};
+int kFpsInfoMaxSize = 100;
 
-class PerformanceCollectionUtil {
-  static PerformanceCollectionUtil _instance;
+/// Fps 信息存储
+class CommonStorage {
+  static CommonStorage _instance;
 
-  static PerformanceCollectionUtil get instance {
-    if (_instance != null) {
-      return _instance;
+  static CommonStorage get instance {
+    if (_instance == null) {
+      _instance = CommonStorage._();
     }
-    _instance = PerformanceCollectionUtil();
     return _instance;
   }
 
-  CommonStorage storage = CommonStorage(maxCount: 240);
-
-  //接受来自性能监控库的数据
-  StreamController<Map<String, dynamic>> controller;
-
-  //提供给业务方预处理数据的接口
-  Map<String, dynamic> Function(Map<String, dynamic> source) customHandleData;
-
-  //性能数据存储Model
-  PerformanceBean performanceBean = PerformanceBean();
-
-  //需要观察的性能数据
-  Map<String, String> performanceDataMapping = defaultPerformanceDataMapping;
-
-  PerformanceCollectionUtil() {
-    controller = StreamController();
-    controller.stream.listen((data) {
-      if (customHandleData != null) data = customHandleData(data);
-      performanceBean.addToFirst(data);
-    });
+  CommonStorage._() {
+    maxCount = kFpsInfoMaxSize;
   }
 
-  Map<String, String> toNativeJson() {
-    Map<String, String> result = {};
-    result['performanceDataMapping'] = performanceDataMapping.toString();
-    result['performanceData'] = performanceBean.performanceData.toString();
-    return result;
+  int maxCount;
+  Queue<FpsInfo> items = new Queue();
+  double max = 0;
+  double totalNum = 0;
+
+  List<FpsInfo> getAll() {
+    return items.toList();
   }
 
-  void clean() {
-    performanceBean.clean();
+  void clear() {
+    items.clear();
+    max = 0;
+    totalNum = 0;
   }
 
-  void onDispose() {
-    performanceBean = null;
-    controller.close();
-    performanceDataMapping?.clear();
+  bool save(FpsInfo info) {
+    if (items.length >= maxCount) {
+      totalNum -= items.removeFirst().totalSpan;
+    }
+    items.add(info);
+    totalNum += info.totalSpan;
+    max = info.totalSpan > max ? info.totalSpan : max;
+    return true;
+  }
+
+  num getAvg() {
+    return totalNum / items.length;
+  }
+
+  bool contains(FpsInfo info) {
+    return items.contains(info);
   }
 }

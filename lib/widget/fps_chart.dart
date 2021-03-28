@@ -1,7 +1,7 @@
-import 'dart:math';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:fps_monitor/bean/fps_info.dart';
+import 'package:fps_monitor/util/collection_util.dart';
 
 class BarChartPainter extends CustomPainter {
   List<FpsInfo> datas;
@@ -40,15 +40,15 @@ class BarChartPainter extends CustomPainter {
     final List<double> yAxisLabels = [];
 
     yAxisLabels.add(16);
-    yAxisLabels.add(32);
-    yAxisLabels.add(50);
+    yAxisLabels.add(33);
+    yAxisLabels.add(66);
     yAxisLabels.add(100);
 
     yAxisLabels.asMap().forEach(
       (index, label) {
         // 标识的高度为画布高度减去标识的值
         final double top = sh - label * 2.5;
-        final rect = Rect.fromLTWH(0, top, 4, 1);
+        // final rect = Rect.fromLTWH(0, top, 4, 1);
         final Offset textOffset = Offset(
           0 - (label.toInt().toString().length == 3 ? 24 : 20).toDouble(),
           top - labelFontSize / 2,
@@ -74,18 +74,34 @@ class BarChartPainter extends CustomPainter {
     final sh = size.height;
     final paint = Paint()..style = PaintingStyle.fill;
     final double marginLeft = 7.5;
-    double _barWidth = 2.5;
+    double _barWidth = (size.width / kFpsInfoMaxSize.toDouble());
     double maxVisibleSize = (size.width - marginLeft) / 2.5;
     if (datas.length > maxVisibleSize.toInt()) {
       datas = datas.sublist(datas.length - maxVisibleSize.toInt());
     }
     double _barGap = 0;
+    int A = 0;
+    int B = 0;
+    int C = 0;
+    int D = 0;
+
     for (int i = 0; i < datas.length; i++) {
-      int value = datas[i].getValue();
-      value = min(value, 110);
-      paint.color = value <= 16
+      int value = datas[i].getValue().toInt();
+
+      if (value > 66) {
+        D++;
+      } else if (value > 33) {
+        C++;
+      } else if (value > 18) {
+        B++;
+      } else {
+        A++;
+      }
+      paint.color = value <= 18
           ? Color(0xff55a8fd)
-          : value < 50 ? Color(0xfffad337) : Color(0xffd0607e);
+          : value <= 33
+              ? Color(0xfffad337)
+              : value <= 66 ? Color(0xFFF48FB1) : Color(0xFFD32F2F);
       // 矩形的上边缘为画布高度减去数据值
       final double top = sh - value * 2.5;
       // 矩形的左边缘为当前索引值乘以矩形宽度加上矩形之间的间距
@@ -96,6 +112,19 @@ class BarChartPainter extends CustomPainter {
       // 使用 drawRect 方法绘制矩形
       canvas.drawRect(rect, paint);
     }
+    TextPainter(
+      text: TextSpan(
+        text: "流畅：$A 良好：$B 卡顿：$C 严重卡顿：$D",
+        style: TextStyle(fontSize: 10, color: Color(0xff4a4b5b)),
+      ),
+      textAlign: TextAlign.right,
+      textDirection: TextDirection.ltr,
+      textWidthBasis: TextWidthBasis.longestLine,
+    )
+      ..layout(
+        minWidth: 0,
+      )
+      ..paint(canvas, Offset.zero);
   }
 
   @override
