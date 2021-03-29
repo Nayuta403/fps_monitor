@@ -114,7 +114,7 @@ class BarChartPainter extends CustomPainter {
     }
     TextPainter(
       text: TextSpan(
-        text: "流畅：$A 良好：$B 卡顿：$C 严重卡顿：$D",
+        text: "流畅：$A 良好：$B 轻微卡顿：$C 卡顿：$D",
         style: TextStyle(fontSize: 10, color: Color(0xff4a4b5b)),
       ),
       textAlign: TextAlign.right,
