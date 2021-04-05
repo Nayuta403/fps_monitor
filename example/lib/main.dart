@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:fps_monitor/widget/custom_widget_inspector.dart';
 
 void main() => runApp(MyApp());
@@ -7,8 +8,12 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+    GlobalKey<NavigatorState> globalKey = GlobalKey();
+    WidgetsBinding.instance.addPostFrameCallback((t) {
+      overlayState = globalKey.currentState.overlay;
+    });
     return MaterialApp(
-      navigatorKey: navGlobalKey,
+      navigatorKey: globalKey,
       title: 'Flutter Demo',
       builder: (ctx, child) => CustomWidgetInspector(
         child: child,
