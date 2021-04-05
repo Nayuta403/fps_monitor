@@ -97,7 +97,7 @@
 ##  3、How to Use it 如何使用？
 ### 一、项目依赖
 dependencies:
- fps_monitor: ^1.12.13
+  fps_monitor: 1.12.13-1
 ### 二、接入工程
 有两处接入点
 
