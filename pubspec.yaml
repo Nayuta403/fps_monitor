@@ -1,8 +1,7 @@
 name: fps_monitor
 description: A flutter package can help you get the Fps information for your app .
-version: 1.12.13-1
-#author: Nayuta-D<762579473@qq.com>
-homepage: https://github.com/Nayuta-D/fps_monitor
+version: 1.12.13-2
+homepage: https://github.com/Nayuta403/fps_monitor
 
 environment:
   sdk: ">=2.1.0 <3.0.0"

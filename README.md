@@ -1,3 +1,4 @@
+
 ## 导语：
 
 对于任何一款应用而言，页面的流畅度一定是影响用户体验最重要的几个指标之一。作为开发者，优化页面流畅度也是自己技术实力的体现。但在决定进行优化之前，还有两个更重要的问题摆在我们面前：**1、如何发现卡顿的页面？**、**2、如何衡量我的优化效果？**
@@ -5,11 +6,10 @@
 为了解决这两个问题，本期给大家带来一个很有意思的小工具：**fps_monitor**
 
 ***
-## 1、What's this 这是个什么工具？
+## 一、What's this 这是个什么工具？
 
 首先一句话告诉你：**这是一个能在 profile/debug 模式下，直观帮助我们评估页面流畅度的工具！！**
 直白来说就是：这是一个可以在(刷新率60)设备上直接查看最近（默认 100）帧的表现情况的小工具，直接上图：
-
 
 
 
@@ -27,9 +27,9 @@
 
 ***
 
-## 2、Why you need this 为什么需要这个工具？
+## 二、Why you need this 为什么你需要这个工具？
 
-### 一、为什么我没选择 PerformanceOverLay 和 DoKit？
+### 1、为什么我没选择 PerformanceOverLay 和 DoKit？
 看到上面的功能可能有人有疑惑，你这功能咋和 PerformanceOverLay 这么类似？
 
 首先，我在使用 PerformanceOverLay 的时候遇到了一点问题：
@@ -39,9 +39,9 @@
 
 如图，PerformanceOverLay 上分别为我们展示了构建（UI）耗时和渲染（GPU）耗时。
 
-我遇到的第一个问题是，因为我们在分析流畅度的时候，往往是看一帧的总耗时。这样拆分了之后，一帧的耗时变成了上下的和，对我而言很不直观。
+我遇到的第一个问题是，因为我们在判断流畅度的时候，**往往是看一帧的总耗时**。这样拆分之后，一帧的耗时变成了上下的和，对我而言很不直观。
 
-其次，这里面提供`最大耗时`或者`平均耗时`并不能很好的帮助我们量化页面的流畅程度。因为这个统计过程，会直接将一帧的耗时进行平均，这就带来一个问题。我们知道对于60刷新率的设备，两帧的间隔时间最小应该是 16.7ms，而 PerformanceOverLay 的收集过程没有对数据过滤，会出现一帧耗时小于 16.7ms，这就导致平均数据可能偏低。（下图平均一帧耗时为：10.6ms）
+其次，这里面提供`最大耗时`或者`平均耗时`并不能很好的帮助我们量化页面的流畅程度。因为这个统计过程，会直接将一帧的耗时进行平均，这就带来一个问题。我们知道对于60刷新率的设备，两帧的间隔时间最小应该是 16.7ms，而 PerformanceOverLay 的收集过程没有对数据过滤，会出现一帧耗时小于 16.7ms，这就导致平均数据可能偏低。（下图平均一帧耗时为：10.6ms 60HZ设备）
 ![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/3289936d52424f7797f43634837148ce~tplv-k3u1fbpfcp-watermark.image)
 
 其实这样来看，DoKit是一个不错的选择
@@ -59,7 +59,7 @@
 
 同时支持设置最大采集帧数
 
-### 二、我是如何理解页面流畅度
+### 2、我是如何理解页面流畅度
 
 我在上一期[ListView流畅度翻倍！！Flutter卡顿分析和通用优化方案](https://juejin.cn/post/6940134891606507534)有解释过
 
@@ -90,18 +90,18 @@
 * 轻微卡顿：FPS在15-30之间，即一帧耗时在 33ms-67ms 之间
 * 卡顿：FPS低于15，即一帧耗时大于 66.7ms
 
-并统计出现的次数，你可以根据这几项数据，去制定一个理想的流畅度。例如：流畅的帧数占统计帧数的90%，或者卡顿的帧数不超过5次。
+并统计出现的次数，你可以根据这几项数据，对比优化前后的数据，得出性能的提升情况；当然也可以制定一个理想的流畅度。例如：流畅的帧数占统计帧数的90%，或者卡顿的帧数不超过5次。
 
 ***
 
-##  3、How to Use it 如何使用？
-### 一、项目依赖
+##  三、How to use it 如何使用？
+### 1、项目依赖
 dependencies:
-  fps_monitor: 1.12.13-1
-### 二、接入工程
+ fps_monitor: ^1.12.13-1
+### 2、接入工程
 有两处接入点
 
-* 1、指定overLayState ，因为需要弹出一个Fps的统计页面，所以当前指定overLayState。
+* 指定overLayState ，因为需要弹出一个Fps的统计页面，所以当前指定overLayState。
 **（PS：大家一般使用Navigator.of(context)去跳转一个页面，通过GlobalKey可以实现无context的跳转）**
 
 ![image.png](https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/800dd3bb2e4c402db6d66758ad6154e2~tplv-k3u1fbpfcp-watermark.image)
@@ -117,11 +117,18 @@ navigatorKey: globalKey,
 
 ```
 
-* 2、在build属性中包裹组件
+* 在build属性中包裹组件
 
 ![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/5770b6ef7ede429c95176e1eceb858b6~tplv-k3u1fbpfcp-watermark.image)
 
-### 三、如何使用
+```dart
+builder: (ctx, child) =>
+          CustomWidgetInspector(
+            child: child,
+          ),
+```
+
+### 3、如何使用
 在完成了上述步骤之后，你只需要启动app，**该工具只会在profile/debug模式下集成**，在你的右下角会出现一个 ⏯ 按钮，点击开始记录，再次点击显示数据。
 
 ![Screenrecording_20210405_171133.gif](https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/4b13856e7c274513ac488f2959877786~tplv-k3u1fbpfcp-watermark.image)
@@ -132,8 +139,42 @@ navigatorKey: globalKey,
 
 ![Screenrecording_20210405_171154.gif](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/373a7a22b17d4b308eacaaaa933a3358~tplv-k3u1fbpfcp-watermark.image)
 
-### 四、Warning：
+### 4、Warning：
 
 目前这个项目是基于 Flutter 1.12.13 分支进行开发，如果你在接入项目中遇到了了兼容性问题，欢迎评论区留言或者公众号私信我。当然更加欢迎各位直接PR~
 
+***
 
+### 四、how do it 来点原理？
+
+可能你会对这个工具的检测原理感兴趣，那咱们再来唠两句原理。
+
+#### 绘制数据的获取
+```dart
+ WidgetsBinding.instance.addTimingsCallback(monitor);
+```
+Flutter 会在每帧完成绘制后，会将耗时进行回调。耗时体现在三个变量上：1、构建时间；2、绘制时间；3、总时间。当你点击 ⏯ 按钮的时候，工具便开始采集耗时信息。
+
+其实对于 Flutter 相关的渲染调度，推荐大家看看 `SchedulerBinding` ，里面写得再详细不过。
+
+#### 显示Fps界面
+
+显示 Fps 的页面比较简单，直接通过 OverlayState 插入即可。如果你不太熟悉 Overlay 可以把它理解成浮窗。其中的表格绘制通过使用 DoKit 的自定义画笔实现，当然也可替换成各种开源的图表库。
+
+***
+## 最后 感谢各位吴彦祖和彭于晏的点赞,Start,和Follow
+
+如果你觉得这个工具还不错，点个赞支持一下吧~
+
+最后附上我的：
+
+掘金主页：[Nayuta]( https://juejin.cn/user/4309694831660711)
+
+
+欢迎搜索公众号：**进击的Flutter或者runflutter** 里面整理收集了最详细的 Flutter 进阶与优化指南。关注我，获取我的最新文章~
+
+
+![1361617636891_.pic.jpg](https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/dd8c5b194fe244d7a8b56a68e254a4fb~tplv-k3u1fbpfcp-watermark.image)
+
+
+如果使用过程有问题可以直接通过公众号私信我~
