@@ -75,7 +75,6 @@ class BarChartPainter extends CustomPainter {
     final paint = Paint()..style = PaintingStyle.fill;
     final double marginLeft = 7.5;
     double _barWidth = (size.width / CommonStorage.instance.maxCount);
-    double maxVisibleSize = (size.width - marginLeft) / 2.5;
     double _barGap = 0;
     int A = 0;
     int B = 0;
