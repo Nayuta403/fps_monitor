@@ -74,11 +74,7 @@ class BarChartPainter extends CustomPainter {
     final sh = size.height;
     final paint = Paint()..style = PaintingStyle.fill;
     final double marginLeft = 7.5;
-    double _barWidth = (size.width / kFpsInfoMaxSize.toDouble());
-    double maxVisibleSize = (size.width - marginLeft) / 2.5;
-    if (datas.length > maxVisibleSize.toInt()) {
-      datas = datas.sublist(datas.length - maxVisibleSize.toInt());
-    }
+    double _barWidth = (size.width / CommonStorage.instance.maxCount);
     double _barGap = 0;
     int A = 0;
     int B = 0;
@@ -114,7 +110,7 @@ class BarChartPainter extends CustomPainter {
     }
     TextPainter(
       text: TextSpan(
-        text: "流畅：$A 良好：$B 卡顿：$C 严重卡顿：$D",
+        text: "流畅：$A 良好：$B 轻微卡顿：$C 卡顿：$D",
         style: TextStyle(fontSize: 10, color: Color(0xff4a4b5b)),
       ),
       textAlign: TextAlign.right,

@@ -140,7 +140,7 @@ class _PerformanceObserverWidgetState extends State<PerformanceObserverWidget> {
           });
         }
         fpsPageShowing = true;
-        navGlobalKey.currentState.overlay.insert(fpsInfoPage);
+        overlayState.insert(fpsInfoPage);
       }
     }
   }

@@ -7,7 +7,7 @@ import 'performance_observer_widget.dart';
 
 const double _kInspectButtonMargin = 10.0;
 const double _kErrorReminderButtonMargin = 40.0;
-GlobalKey<NavigatorState> navGlobalKey = GlobalKey();
+OverlayState overlayState;
 
 class CustomWidgetInspector extends StatefulWidget {
   /// 展示性能监控数据
