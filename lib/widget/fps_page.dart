@@ -14,7 +14,7 @@ class FpsPage extends StatefulWidget {
 class FpsPageState extends State<FpsPage> {
   @override
   Widget build(BuildContext context) {
-    List<FpsInfo> list = CommonStorage.instance.getAll();
+    List<FpsInfo> list = CommonStorage.instance!.getAll();
     return Container(
       width: MediaQuery.of(context).size.width,
       child: Column(
@@ -26,12 +26,12 @@ class FpsPageState extends State<FpsPage> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
-                  info('近${CommonStorage.instance.items.length}帧'),
-                  info('最大耗时:${CommonStorage.instance.max.toStringAsFixed(1)}'),
+                  info('近${CommonStorage.instance!.items.length}帧'),
+                  info('最大耗时:${CommonStorage.instance!.max!.toStringAsFixed(1)}'),
                   info(
-                      '平均耗时:${CommonStorage.instance.getAvg().toStringAsFixed(1)}'),
+                      '平均耗时:${CommonStorage.instance!.getAvg().toStringAsFixed(1)}'),
                   info(
-                      '总耗时:${CommonStorage.instance.totalNum.toStringAsFixed(1)}')
+                      '总耗时:${CommonStorage.instance!.totalNum.toStringAsFixed(1)}')
                 ],
               )),
           Divider(

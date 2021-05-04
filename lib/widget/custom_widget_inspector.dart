@@ -7,7 +7,7 @@ import 'performance_observer_widget.dart';
 
 const double _kInspectButtonMargin = 10.0;
 const double _kErrorReminderButtonMargin = 40.0;
-OverlayState overlayState;
+late OverlayState overlayState;
 
 class CustomWidgetInspector extends StatefulWidget {
   /// 展示性能监控数据
@@ -16,7 +16,7 @@ class CustomWidgetInspector extends StatefulWidget {
   /// Creates a widget that enables inspection for the child.
   ///
   /// The [child] argument must not be null.
-  const CustomWidgetInspector({Key key, @required this.child})
+  const CustomWidgetInspector({Key? key, required this.child})
       : assert(child != null),
         super(key: key);
 

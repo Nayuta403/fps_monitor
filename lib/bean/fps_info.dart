@@ -1,10 +1,10 @@
 class FpsInfo {
-  double totalSpan;
-  String pageName;
-  double buildDuration;
-  double rasterDuration;
+  double? totalSpan;
+  String? pageName;
+  double? buildDuration;
+  double? rasterDuration;
 
-  double getValue() {
+  double? getValue() {
     return totalSpan;
   }
 }
