@@ -6,7 +6,7 @@ import 'package:fps_monitor/util/collection_util.dart';
 class BarChartPainter extends CustomPainter {
   List<FpsInfo> datas;
 
-  BarChartPainter({@required this.datas});
+  BarChartPainter({required this.datas});
 
   @override
   bool shouldRepaint(BarChartPainter oldDelegate) => true;
@@ -74,7 +74,7 @@ class BarChartPainter extends CustomPainter {
     final sh = size.height;
     final paint = Paint()..style = PaintingStyle.fill;
     final double marginLeft = 7.5;
-    double _barWidth = (size.width / CommonStorage.instance.maxCount);
+    double _barWidth = (size.width / CommonStorage.instance!.maxCount);
     double _barGap = 0;
     int A = 0;
     int B = 0;
@@ -82,7 +82,7 @@ class BarChartPainter extends CustomPainter {
     int D = 0;
 
     for (int i = 0; i < datas.length; i++) {
-      int value = datas[i].getValue().toInt();
+      int value = datas[i].getValue()!.toInt();
 
       if (value > 66) {
         D++;
@@ -135,7 +135,7 @@ class FpsBarChart extends StatefulWidget {
   final List<FpsInfo> data;
 
   const FpsBarChart({
-    @required this.data,
+    required this.data,
   });
 
   @override

@@ -9,7 +9,7 @@ import 'package:fps_monitor/widget/custom_widget_inspector.dart';
 import 'fps_page.dart';
 
 class PerformanceObserverWidget extends StatefulWidget {
-  const PerformanceObserverWidget({Key key}) : super(key: key);
+  const PerformanceObserverWidget({Key? key}) : super(key: key);
 
   @override
   _PerformanceObserverWidgetState createState() =>
@@ -20,10 +20,10 @@ class _PerformanceObserverWidgetState extends State<PerformanceObserverWidget> {
   bool startRecording = false;
   bool fpsPageShowing = false;
 
-  ValueNotifier controller;
-  Function(List<FrameTiming>) monitor;
-  OverlayEntry fpsInfoPage;
-  OverlayEntry performancePage;
+  late ValueNotifier controller;
+  late Function(List<FrameTiming>) monitor;
+  OverlayEntry? fpsInfoPage;
+  OverlayEntry? performancePage;
 
   @override
   void initState() {
@@ -36,7 +36,7 @@ class _PerformanceObserverWidgetState extends State<PerformanceObserverWidget> {
         duration = frameTiming.totalSpan.inMilliseconds.toDouble();
         FpsInfo fpsInfo = new FpsInfo();
         fpsInfo.totalSpan = max(16.7, duration);
-        CommonStorage.instance.save(fpsInfo);
+        CommonStorage.instance!.save(fpsInfo);
       });
     };
   }
@@ -48,11 +48,11 @@ class _PerformanceObserverWidgetState extends State<PerformanceObserverWidget> {
   }
 
   void start() {
-    WidgetsBinding.instance.addTimingsCallback(monitor);
+    WidgetsBinding.instance!.addTimingsCallback(monitor);
   }
 
   void stop() {
-    WidgetsBinding.instance.removeTimingsCallback(monitor);
+    WidgetsBinding.instance!.removeTimingsCallback(monitor);
   }
 
   @override
@@ -63,7 +63,7 @@ class _PerformanceObserverWidgetState extends State<PerformanceObserverWidget> {
           child: RepaintBoundary(
             child: ValueListenableBuilder(
                 valueListenable: controller,
-                builder: (context, snapshot, _) {
+                builder: (context, dynamic snapshot, _) {
                   return Container(
                     color: Colors.white,
                     child: !startRecording
@@ -98,7 +98,7 @@ class _PerformanceObserverWidgetState extends State<PerformanceObserverWidget> {
                   Expanded(
                       child: GestureDetector(
                     onTap: () {
-                      fpsInfoPage.remove();
+                      fpsInfoPage!.remove();
                       fpsPageShowing = false;
                       start();
                     },
@@ -122,9 +122,9 @@ class _PerformanceObserverWidgetState extends State<PerformanceObserverWidget> {
                               ),
                               onTap: () {
                                 startRecording = false;
-                                fpsInfoPage.remove();
+                                fpsInfoPage!.remove();
                                 fpsPageShowing = false;
-                                CommonStorage.instance.clear();
+                                CommonStorage.instance!.clear();
                                 controller.value = startRecording;
                                 // setState(() {});
                               },
@@ -140,7 +140,7 @@ class _PerformanceObserverWidgetState extends State<PerformanceObserverWidget> {
           });
         }
         fpsPageShowing = true;
-        overlayState.insert(fpsInfoPage);
+        overlayState.insert(fpsInfoPage!);
       }
     }
   }

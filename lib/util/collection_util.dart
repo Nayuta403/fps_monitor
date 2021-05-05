@@ -6,22 +6,20 @@ int kFpsInfoMaxSize = 100;
 
 /// Fps 信息存储
 class CommonStorage {
-  static CommonStorage _instance;
+  static CommonStorage? _instance;
 
-  static CommonStorage get instance {
+  static CommonStorage? get instance {
     if (_instance == null) {
       _instance = CommonStorage._();
     }
     return _instance;
   }
 
-  CommonStorage._() {
-    maxCount = kFpsInfoMaxSize;
-  }
+  CommonStorage._();
 
-  int maxCount;
+  int maxCount = kFpsInfoMaxSize;
   Queue<FpsInfo> items = new Queue();
-  double max = 0;
+  double? max = 0;
   double totalNum = 0;
 
   List<FpsInfo> getAll() {
@@ -36,11 +34,11 @@ class CommonStorage {
 
   bool save(FpsInfo info) {
     if (items.length >= maxCount) {
-      totalNum -= items.removeFirst().totalSpan;
+      totalNum -= items.removeFirst().totalSpan!;
     }
     items.add(info);
-    totalNum += info.totalSpan;
-    max = info.totalSpan > max ? info.totalSpan : max;
+    totalNum += info.totalSpan!;
+    max = info.totalSpan! > max! ? info.totalSpan : max;
     return true;
   }
 
